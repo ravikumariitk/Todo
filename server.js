@@ -1,5 +1,8 @@
 let express = require('express')
+let app = express();
 let md5=require('md5')
+app.use(express.urlencoded({extended: true})); 
+app.use(express.json());   
 const mongoose = require('mongoose');
 mongoose.connect("mongodb+srv://RaviKumar:Ravi%40123@cluster0.fjtakvv.mongodb.net/onlocalhost", { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
@@ -13,10 +16,9 @@ const kittySchema = new mongoose.Schema({
     id: Number,
     Time:String
 });
+
 let Kitten;
 let ejs = require('ejs')
-let app = express();
-app.use(express.urlencoded())
 app.set('view engine', "ejs")
 app.use("/static",express.static('static'));
 app.get('/home', (req, res) => {//edited area

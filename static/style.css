@@ -1,7 +1,6 @@
 #main{
     text-align: left;
 }
-
 @media only screen and (max-width: 600px)  {
     #main_page{
         height: 100vh;

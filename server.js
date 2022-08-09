@@ -1,5 +1,5 @@
 let express = require('express')
-let i = 0;
+let md5=require('md5')
 const mongoose = require('mongoose');
 mongoose.connect("mongodb+srv://RaviKumar:Ravi%40123@cluster0.fjtakvv.mongodb.net/onlocalhost", { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
@@ -96,7 +96,7 @@ app.post('/update', (req, res) => {
     res.redirect('/home')
 })
 app.post('/compupdate', (req, res) => {
-    
+
     console.log(req.body)
     for (const key in req.body) {
         console.log(key)
@@ -123,7 +123,7 @@ app.post('/login',(req,res)=>{
         res.render('userdoesnotexists')
      }
      else{
-       if(result[0].task===req.body.givenPassword)
+       if(result[0].task===md5(req.body.givenPassword))
        {
          res.redirect("/home")
        }
@@ -145,7 +145,7 @@ app.post('/register', function(req,res){
     if(!(Object.keys(result).length))
     {   
         let Data= new Kitten({
-            task: req.body.givenPassword,
+            task: md5(req.body.givenPassword),
             status: "",
             id: -1,
             Time:""

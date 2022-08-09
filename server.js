@@ -1,8 +1,7 @@
 let express = require('express')
 let app = express();
-let md5=require('md5')
-app.use(express.urlencoded({extended: true})); 
-app.use(express.json());   
+var bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: true }))
 const mongoose = require('mongoose');
 mongoose.connect("mongodb+srv://RaviKumar:Ravi%40123@cluster0.fjtakvv.mongodb.net/onlocalhost", { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;

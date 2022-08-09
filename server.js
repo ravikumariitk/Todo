@@ -136,6 +136,42 @@ app.post('/login',(req,res)=>{
     })
     
 })
+app.get('/forget',(req,res)=>{
+    res.render('forget')
+})
+app.post('/reset',(req,res)=>{
+    Kitten= mongoose.model(req.body.givenEmail,kittySchema)
+    Kitten.updateOne({id:-1},{task:md5(req.body.givenPassword)},(err,result)=>{
+        if(err)
+        {
+            return err;
+
+        }
+        else{
+            res.redirect('/login')
+        }
+    })
+})
+app.post('/forget',(req,res)=>{   
+    Kitten= mongoose.model(req.body.givenEmail,kittySchema)
+    Kitten.find({id:-1,Time:req.body.givenPhone},(err,result)=>{
+        if(err)
+        {
+            return err;
+
+        }
+        else{
+            
+             if(Object.keys(result).length)
+             {
+                   res.render('reset')
+             }
+             else{
+                res.send("<h1>Check Your Phone no. again!</h1>")
+             }
+        }
+    })
+})
 app.post('/register', function(req,res){
    Kitten= mongoose.model(req.body.givenEmail,kittySchema)
    Kitten.find({id:-1},function(err,result){
@@ -148,7 +184,7 @@ app.post('/register', function(req,res){
             task: md5(req.body.givenPassword),
             status: "",
             id: -1,
-            Time:""
+            Time:req.body.givenPhone
            })
            Data.save(function(err,result){
             if(err)

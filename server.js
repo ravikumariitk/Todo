@@ -204,4 +204,7 @@ app.post('/register', function(req,res){
    })
    
 })
-app.listen(process.env.PORT || 80);
+const server = app.listen(process.env.PORT || 80, () => {
+    const port = server.address().port;
+    console.log(`Express is working on port ${port}`);
+  });

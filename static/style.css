@@ -5,7 +5,7 @@
 @media only screen and (max-width: 600px)  {
     #main_page{
         height: 100vh;
-        background-image: url(/static/bear\ wallpaper\ pc\ Mac\ 네이버\ 아이콘\ 곰.png);
+        /* background-image: url(/static/bear\ wallpaper\ pc\ Mac\ 네이버\ 아이콘\ 곰.png); */
         background-attachment: fixed;
         background-size: cover;
         
@@ -23,7 +23,7 @@
         height: 100vh;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        background-image: url(/static/bear\ wallpaper\ pc\ Mac\ 네이버\ 아이콘\ 곰.png);
+        /* background-image: url(/static/bear\ wallpaper\ pc\ Mac\ 네이버\ 아이콘\ 곰.png); */
         background-attachment: fixed;
         background-size: cover;
         
@@ -33,13 +33,13 @@
      height: 50vh; 
      width: 40vw; 
      margin: auto; 
-     margin-top:30%;
+     margin-top:20%;
    }
    #hi{
     height: 50vh;
      width: 40vw;
       margin: auto;
-       margin-top:30%;
+       margin-top:20%;
    }
 }
 #body{

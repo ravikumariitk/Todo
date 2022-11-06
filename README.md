@@ -9,5 +9,4 @@
 6.Add task by writting in the textbox after that hitting "Add" button.<br>
 7.For updating the dashboard check the completed tasks and hit "Update".<br>
 8.For logging out click on the Signout buttom on the right top corner.<br>
-# v2 <br>
-No need to install MongoDB
+

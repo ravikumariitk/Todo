@@ -17,7 +17,7 @@
         margin-bottom: 50px;
     }
 }
-@media only screen and (min-width: 601px)  {
+@media only screen and (min-width: 600px)  {
     #main_page{
         height: 100vh;
         display: grid;
@@ -40,6 +40,12 @@
       margin: auto;
        margin-top:20%;
    }
+   #task{
+    width: 100vw;
+    margin: auto;
+    padding: 10px;
+}
+
 }
 #body{
  /* background-image: url(/static/Image\ about\ cute\ in\ 💖\ by\ Private\ User\ on\ We\ Heart\ It.jpg); */
@@ -52,4 +58,12 @@
     width: 50vw;
     margin: auto;
     padding: 10px;
+}
+@media only screen and (max-width: 600px) {
+    #task{
+    
+        width: 90vw;
+        margin: auto;
+        padding: 10px;
+    } 
 }

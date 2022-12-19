@@ -3,7 +3,7 @@ let app = express();
 var bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: true }))
 const mongoose = require('mongoose');
-mongoose.connect("mongodb+srv://RaviKumar:Ravi%40123@cluster0.fjtakvv.mongodb.net/onlocalhost", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb+srv://Ravi:Ravi%40123@cluster0.zj8yyt3.mongodb.net/todo", { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
@@ -41,10 +41,16 @@ app.post('/add', (req, res) => {
   
     let temp = new Date();
     let time=""
+    time+=temp.getDate();
+    time+="-"
+    time+=temp.getMonth()+1;
+    time+="-"
+    time+=temp.getFullYear();
+    time+="   ";
     time+=temp.getHours();
     time+=":"
-    
     time+=temp.getMinutes();
+
     Kitten.find(function(err,result){
         if(err)
         return err;
@@ -77,7 +83,7 @@ app.get('/comp',(req,res)=>{
 })
 app.get('/use', (req, res) => {
     let temp = new Date();
-    let tempdate = temp.getDay() + "/" + temp.getMonth() + "/" + temp.getFullYear();
+    let tempdate = temp.getDate()+"-"+ temp.getMonth() +"-"+temp.getFullYear()+ temp.getDay() + "/" + temp.getMonth() + "/" + temp.getFullYear();
     res.render('use', { Date: tempdate })
 })
 app.get('/login', (req, res) => {
@@ -124,7 +130,7 @@ app.post('/login',(req,res)=>{
         res.render('userdoesnotexists')
      }
      else{
-       if(result[0].task===md5(req.body.givenPassword))
+       if(result[0].task===(req.body.givenPassword))
        {
          res.redirect("/home")
        }
@@ -142,7 +148,7 @@ app.get('/forget',(req,res)=>{
 })
 app.post('/reset',(req,res)=>{
     Kitten= mongoose.model(req.body.givenEmail,kittySchema)
-    Kitten.updateOne({id:-1},{task:md5(req.body.givenPassword)},(err,result)=>{
+    Kitten.updateOne({id:-1},{task:(req.body.givenPassword)},(err,result)=>{
         if(err)
         {
             return err;
@@ -182,7 +188,7 @@ app.post('/register', function(req,res){
     if(!(Object.keys(result).length))
     {   
         let Data= new Kitten({
-            task: md5(req.body.givenPassword),
+            task: (req.body.givenPassword),
             status: "",
             id: -1,
             Time:req.body.givenPhone

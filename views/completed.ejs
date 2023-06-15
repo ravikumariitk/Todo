@@ -3,45 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>To Do</title>
+    <title>Completed tasks</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
   </head>
-  <body id="body">
-    <nav class="navbar navbar-expand-lg bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="font-size:30px;">Todo</a>
-        <div class="d-flex">
-            <form action="/add" method="post" class="d-flex">
-              <input type="text" required class="form-control" style=" margin:auto ; margin-bottom: 10px;" placeholder="Add a new Task" name="addNew" id="">
-              <input type="submit" style="margin-left: 10px; height: 40px;"  class="btn btn-outline-success" value="Add">      
-            </form>
-            <form action="/signout" class="d-flex">
-              <input style="margin-left: 10px; height: 40px;" type="submit" class="btn btn-danger" id="" value="Sign out">
-            </form>
-          </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin-left:40vw; font-size: 20px;">
-              <li class="nav-item">
-                <a class="nav-link"  href="/home">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link"  href="/use">Use</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link"  href="/comp">Completed tasks</a>
-              </li>
-            </ul>
-          </div>
-      </div>
-    </nav>
-   
+  <body id="body">   
     <div id="task"  >
       <br>
         <h3>&nbsp; &nbsp;Your Completed Tasks</h3>

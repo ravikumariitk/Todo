@@ -1,44 +1,68 @@
 let express = require('express')
-let app = express();
-var bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded({ extended: true }))
+let app = express()
+require('dotenv').config()
+let isauthenticate = 0;
 const mongoose = require('mongoose');
-mongoose.connect("mongodb+srv://Ravi:Ravi%40123@cluster0.zj8yyt3.mongodb.net/todo", { useNewUrlParser: true, useUnifiedTopology: true });
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-    console.log("We are connected")
-});
-const kittySchema = new mongoose.Schema({
-    task: String,
-    status: String,
-    id: Number,
-    Time:String
-});
-
-let Kitten;
 let ejs = require('ejs')
+app.use(express.urlencoded())
 app.set('view engine', "ejs")
-app.use("/static",express.static('static'));
-app.get('/home', (req, res) => {//edited area
-    
-    Kitten.find( {id: {$gte:0}},function (err, kittens) {
-        if (err) 
-        {
-            res.render('access');
-    }
-    else
-        res.render('index', { Data: kittens})
-    })
-})
-app.get('/signout', (req, res) => {
-    res.redirect('/')
-})
+app.use('/static', express.static('static'))
+let url = process.env.MONGOURL
 app.get('/', (req, res) => {
     res.render('Mainpage')
 })
+app.get('/start', (req, res) => {
+    res.render('start');
+})
+app.get('/login', (req, res) => {
+    res.render('start')
+})
+app.get('/register', (req, res) => {
+    res.render('start')
+})
+app.post('/register', (req, res) => {
+    let registerConnection = mongoose.createConnection(url + "/UserData")
+    const regSchema = new mongoose.Schema({
+        Name: String,
+        Password: String,
+        Phone: String,
+        Email: String
+    });
+    let name = req.body.givenName
+    let email = req.body.givenEmail
+    const regModel = registerConnection.model('Userdata', regSchema);
+    regModel.find({ Email: req.body.givenEmail }, (err, result) => {
+        if (Object.keys(result).length != 0) {
+            res.render('userexists')
+        }
+        else {
+            let data = new regModel({
+                Name: req.body.givenName,
+                Email: req.body.givenEmail,
+                Password: req.body.givenPassword,
+                Phone: req.body.givenPhone
+            })
+            isauthenticate = 1;
+            data.save();
+            let taskConnection = mongoose.createConnection(url+"/" + ((email).split("@"))[0])
+            const taskSchema = new mongoose.Schema({
+                task: String,
+                status: String,
+                id: Number,
+                Time: String
+              });
+            const taskModel = taskConnection.model('tasks', taskSchema);
+            taskModel.find({},(err,data)=>{
+                res.render('index',{name:name, email:email,Data:data});
+            })
+            res.render('/index',{name:name, email:email});
+        }
+    })
+})
+
 app.post('/add', (req, res) => {
-  
+    let email=req.body.email;
+    let name=req.body.name;
     let temp = new Date();
     let time=""
     time+=temp.getDate();
@@ -50,167 +74,159 @@ app.post('/add', (req, res) => {
     time+=temp.getHours();
     time+=":"
     time+=temp.getMinutes();
-
-    Kitten.find(function(err,result){
-        if(err)
-        return err;
-        else{
-             id=(Object.keys(result).length)-1
-             const fluffy = new Kitten({ task: req.body.addNew, status: "unchecked", id: id, Time:time });
-             if (req.body.addNew != '') {
-                 fluffy.save(function (err) {
-                     if (err) return console.error(err);
-                     else {
-         
-                         res.redirect('/home')
-                     }
-                 });
-             }
-             else {
-                 res.send('Sorry')
-             }
-        }
+    let taskConnection = mongoose.createConnection(url+"/" + ((email).split("@"))[0])
+    const taskSchema = new mongoose.Schema({
+        task: String,
+        status: String,
+        id: Number,
+        Time: String
+      });
+    const taskModel = taskConnection.model('tasks', taskSchema);
+    taskModel.find({},(err,result)=>{
+        let len =Object.keys(result).length;
+        let data=new taskModel(
+            {
+                task: req.body.task,
+                status: "unchecked",
+                id:len,
+                Time: time
+            }
+        )
+        data.save();
     })
-  
+        res.redirect(`/home?name=${name}&email=${email}`);
 })
-app.get('/comp',(req,res)=>{
-    Kitten.find( {id: {$gte:0}},function (err, kittens) {
-        if (err) return console.error(err);
-        res.render('completed', { Data: kittens})
-    })
 
-  
-})
-app.get('/use', (req, res) => {
-    let temp = new Date();
-    let tempdate = temp.getDate()+"-"+ temp.getMonth() +"-"+temp.getFullYear()+ temp.getDay() + "/" + temp.getMonth() + "/" + temp.getFullYear();
-    res.render('use', { Date: tempdate })
-})
-app.get('/login', (req, res) => {
-   res.render('login')
-})
 app.post('/update', (req, res) => {
     console.log(req.body)
+    let taskConnection = mongoose.createConnection(url+"/" + ((req.body.email).split("@"))[0])
+    const taskSchema = new mongoose.Schema({
+        task: String,
+        status: String,
+        id: Number,
+        Time: String
+      });
+    const taskModel = taskConnection.model('tasks', taskSchema);
     for (const key in req.body) {
         console.log(key)
-        Kitten.updateOne({ id: Number(key) }, {status:'checked'}, function(err,update){
+        taskModel.updateOne({ id: Number(key) }, {status:'checked'}, function(err,update){
             if(err) 
             console.log(err)
             else
             console.log(update)
         });
     }
-    res.redirect('/home')
+    res.redirect(`/home?name=${req.body.name}&email=${req.body.email}`)
 })
-app.post('/compupdate', (req, res) => {
 
-    console.log(req.body)
-    for (const key in req.body) {
-        console.log(key)
-        Kitten.updateOne({ id: Number(key) }, {status:'unchecked'}, function(err,update){
-            if(err) 
-            console.log(err)
-            else
-            console.log(update)
-        });
-    }
-    res.redirect('/comp')
-})
-app.get('/register',function(req,res){
-    res.render('register')
-})
-app.post('/login',(req,res)=>{
-    Kitten= mongoose.model(req.body.givenEmail,kittySchema)
-    Kitten.find({id:-1},function(err,result){
-   if(err)
-   console.log(err)
-   else{
-     if(!(Object.keys(result).length))
-     {   
-        res.render('userdoesnotexists')
-     }
-     else{
-       if(result[0].task===(req.body.givenPassword))
-       {
-         res.redirect("/home")
-       }
-       else{
-        res.render('in')
-       }
-       }
-   }
-   
-    })
-    
-})
-app.get('/forget',(req,res)=>{
-    res.render('forget')
-})
-app.post('/reset',(req,res)=>{
-    Kitten= mongoose.model(req.body.givenEmail,kittySchema)
-    Kitten.updateOne({id:-1},{task:(req.body.givenPassword)},(err,result)=>{
-        if(err)
-        {
-            return err;
-
-        }
-        else{
-            res.redirect('/login')
-        }
+app.get('/comp',(req,res)=>{
+    let taskConnection = mongoose.createConnection(url+"/" + ((req.query.email).split("@"))[0])
+    const taskSchema = new mongoose.Schema({
+        task: String,
+        status: String,
+        id: Number,
+        Time: String
+      });
+    const taskModel = taskConnection.model('tasks', taskSchema);
+    taskModel.find({},(err,result)=>{
+        res.render('completed',{name:req.query.name,email:req.query.email,Data:result});
     })
 })
-app.post('/forget',(req,res)=>{   
-    Kitten= mongoose.model(req.body.givenEmail,kittySchema)
-    Kitten.find({id:-1,Time:req.body.givenPhone},(err,result)=>{
-        if(err)
-        {
-            return err;
 
-        }
-        else{
-            
-             if(Object.keys(result).length)
-             {
-                   res.render('reset')
-             }
-             else{
-                res.send("<h1>Check Your Phone no. again!</h1>")
-             }
-        }
+app.get('/home',(req,res)=>{
+    let taskConnection = mongoose.createConnection(url+"/" + ((req.query.email).split("@"))[0])
+    const taskSchema = new mongoose.Schema({
+        task: String,
+        status: String,
+        id: Number,
+        Time: String
+      });
+    const taskModel = taskConnection.model('tasks', taskSchema);
+    taskModel.find({},(err,result)=>{
+        res.render('index',{name:req.query.name,email:req.query.email,Data:result});
     })
 })
-app.post('/register', function(req,res){
-   Kitten= mongoose.model(req.body.givenEmail,kittySchema)
-   Kitten.find({id:-1},function(err,result){
-  if(err)
-  console.log(err)
-  else{
-    if(!(Object.keys(result).length))
-    {   
-        let Data= new Kitten({
-            task: (req.body.givenPassword),
-            status: "",
-            id: -1,
-            Time:req.body.givenPhone
-           })
-           Data.save(function(err,result){
-            if(err)
-            {
-                res.redirect('/register')
-            }
-            else{
-                res.redirect('/home')
-            }
-           })
-    }
-    else{
-        res.render('userexists')
+
+app.get('/signout',(req,res)=>{
+    isauthenticate=0;
+    res.redirect('/');
+})
+app.post('/login', (req, res) => {
+    let name = req.body.givenName;
+    let email = req.body.givenEmail;
+    // console.log(req.body);
+    let loginConnection = mongoose.createConnection(url+"/UserData")
+    const loginSchema = new mongoose.Schema({
+      Password: String,
+      Email: String
+    });
+    const loginModel = loginConnection.model('Userdata', loginSchema);
+    loginModel.find({ Email: req.body.givenEmail }, (err, result) => {
+      if (Object.keys(result).length != 0) {
+        if (req.body.givenPassword == result[0].Password) {
+          isauthenticate = 1
+        if (isauthenticate == 1) {
+            let taskConnection = mongoose.createConnection(url+"/" + ((email).split("@"))[0])
+            const taskSchema = new mongoose.Schema({
+                task: String,
+                status: String,
+                id: Number,
+                Time: String
+              });
+            const taskModel = taskConnection.model('tasks', taskSchema);
+            taskModel.find({},(err,data)=>{
+                res.render('index',{name:name, email:email,Data:data});
+            })
+        }
+        else
+          res.redirect('/login')
+        }
+        else {
+          res.render('in')
+        }
       }
-  }
-  
-   })
-   
-})
-app.listen(process.env.PORT||80,()=>{
+      else {
+        res.render('userdoesnotexists')
+      }
+    })
+  })
+  app.get('/forget', (req, res) => {
+    res.render('forget')
+  })
+  app.post('/forget', (req, res) => {
+    let forgetConnection = mongoose.createConnection(url+"/UserData")
+    const forgetSchema = new mongoose.Schema({
+      Phone: String,
+      Email: String
+    });
+    // console.log(req.body);
+    const forgetModel = forgetConnection.model('Userdata', forgetSchema);
+    forgetModel.find({ Email: req.body.email, Phone: req.body.phone }, (err, result) => {
+      if (Object.keys(result).length == 0) {
+        res.send("Check your info again.")
+      }
+      else {
+        res.render('reset')
+      }
+    })
+  })
+app.post('/reset', (req, res) => {
+    let resetConnection = mongoose.createConnection(url+"/UserData")
+    const resetSchema = new mongoose.Schema({
+      Password: String,
+      Email: String
+    });
+    // console.log(req.body);
+    const resetModel = resetConnection.model('Userdata', resetSchema);
+    resetModel.updateOne({ Email: req.body.email }, { Password: req.body.givenPassword }, (err, update) => {
+      if (err) {
+        res.send("Some error occured!!!")
+      }
+      else {
+        res.redirect('/login')
+      }
+    })
+  })
+app.listen(process.env.PORT || 80, () => {
     console.log("Running")
 });

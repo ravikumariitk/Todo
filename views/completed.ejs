@@ -19,10 +19,9 @@
               <%  for (let i = Data.length-1 ; i >=0 ; i--) { %>
                <%  let a=(Data[i].status==="checked") %>
               <% if(a){ %>
-                <li  class="form-control" >
                 <form action="/compupdate" method="post">
-                <%= Data[i].task %><span style="float:  right;"><%= Data[i].Time %></span></form>
-              </li>
+                
+                 <li  class="form-control" ><%= Data[i].task %><span style="float:  right;"><%= Data[i].Time %></span></li></form>
              <% } %>
                 <%  } %>
   </ul>

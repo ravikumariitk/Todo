@@ -119,6 +119,7 @@ app.post('/update', (req, res) => {
 })
 
 app.get('/comp',(req,res)=>{
+  console.log(req);
     let taskConnection = mongoose.createConnection(url+"/" + ((req.query.email).split("@"))[0])
     const taskSchema = new mongoose.Schema({
         task: String,
@@ -128,7 +129,7 @@ app.get('/comp',(req,res)=>{
       });
     const taskModel = taskConnection.model('tasks', taskSchema);
     taskModel.find({},(err,result)=>{
-        res.render('completed',{name:req.query.name,email:req.query.email,Data:result});
+        res.render('completed',{ email:req.query.email, Data:result});
     })
 })
 
@@ -145,9 +146,7 @@ app.get('/home',(req,res)=>{
         res.render('index',{name:req.query.name,email:req.query.email,Data:result});
     })
 })
-app.post('/compupdate',(req,res)=>{
-  console.log(req.body);
-})
+
 app.get('/signout',(req,res)=>{
     isauthenticate=0;
     res.redirect('/');

@@ -55,7 +55,6 @@ app.post('/register', (req, res) => {
             taskModel.find({},(err,data)=>{
                 res.render('index',{name:name, email:email,Data:data});
             })
-            res.render('/index',{name:name, email:email});
         }
     })
 })
@@ -146,7 +145,9 @@ app.get('/home',(req,res)=>{
         res.render('index',{name:req.query.name,email:req.query.email,Data:result});
     })
 })
-
+app.post('/compupdate',(req,res)=>{
+  console.log(req.body);
+})
 app.get('/signout',(req,res)=>{
     isauthenticate=0;
     res.redirect('/');
